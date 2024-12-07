@@ -1,9 +1,9 @@
 ---
-service_name:
-service_port: 80
-network: traefik
-image:
-traefik_services_conf_dir:
-hostname:
-docker_volumes: {}
-docker_env: {}
+gfreezy_service_name:
+gfreezy_service_port: 80
+gfreezy_traefik_network: traefik
+gfreezy_service_image:
+gfreezy_traefik_services_conf_dir:
+gfreezy_service_hostname:
+gfreezy_service_docker_volumes: {}
+gfreezy_service_docker_env: {}

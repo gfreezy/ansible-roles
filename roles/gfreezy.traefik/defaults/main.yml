@@ -1,7 +1,7 @@
 ---
-conf_dir: /opt/services/traefik
-services_conf_dir:
-docker_traefik_conf: /var/conf/traefik
-network: traefik
-cloudflare_dns_api_token:
-custom_certs_dir: "{{ conf_dir }}/certs"
+gfreezy_traefik_conf_dir: /opt/services/traefik
+gfreezy_traefik_services_conf_dir:
+gfreezy_traefik_docker_traefik_conf: /var/conf/traefik
+gfreezy_traefik_network: traefik
+gfreezy_traefik_cloudflare_dns_api_token:
+gfreezy_traefik_custom_certs_dir: "{{gfreezy_traefik_conf_dir }}/certs"

@@ -7,32 +7,32 @@ http:
           - "127.0.0.1/8"  # Only allow localhost
 
   routers:
-    {{service_name}}-https-router:
-      rule: Host(`{{hostname}}`) && !Path(`/metrics`)
+    {{gfreezy_service_name}}-https-router:
+      rule: Host(`{{gfreezy_service_hostname}}`) && !Path(`/metrics`)
       entryPoints:
         - websecure
-      service: {{service_name}}-service
+      service: {{gfreezy_service_name}}-service
       tls:
         certResolver: myresolver
 
-    {{service_name}}-http-router:
-      rule: Host(`{{hostname}}`) && !Path(`/metrics`)
+    {{gfreezy_service_name}}-http-router:
+      rule: Host(`{{gfreezy_service_hostname}}`) && !Path(`/metrics`)
       entryPoints:
         - web
-      service: {{service_name}}-service
+      service: {{gfreezy_service_name}}-service
 
-    {{service_name}}-metrics-router:
-      rule: Host(`{{hostname}}`) && Path(`/metrics`)
+    {{gfreezy_service_name}}-metrics-router:
+      rule: Host(`{{gfreezy_service_hostname}}`) && Path(`/metrics`)
       entryPoints:
         - web
       middlewares:
         - "local-only"
-      service: {{service_name}}-service
+      service: {{gfreezy_service_name}}-service
 
   services:
-    {{service_name}}-service:
+    {{gfreezy_service_name}}-service:
       loadBalancer:
         servers:
-          {% for result in template_service_names -%}
-          - url: http://{{result}}:{{service_port}}
+          {% for result in template_gfreezy_service_names -%}
+          - url: http://{{result}}:{{gfreezy_service_port}}
           {% endfor %}

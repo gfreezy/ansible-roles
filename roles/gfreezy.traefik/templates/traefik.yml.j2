@@ -7,7 +7,7 @@ api:
 
 providers:
   file:
-    directory: {{docker_traefik_conf}}/conf
+    directory: {{gfreezy_traefik_docker_traefik_conf}}/conf
     watch: true
 
 entryPoints:
@@ -21,7 +21,7 @@ certificatesResolvers:
   myresolver:
     acme:
       email: a@allsunday.io
-      storage: {{docker_traefik_conf}}/letsencrypt/acme.json
+      storage: {{gfreezy_traefik_docker_traefik_conf}}/letsencrypt/acme.json
       dnsChallenge:
         provider: cloudflare
 metrics:

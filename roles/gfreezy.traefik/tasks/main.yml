@@ -4,38 +4,38 @@
     path: "{{ item }}"
     state: directory
   loop:
-    - "{{ conf_dir }}"
-    - "{{ services_conf_dir }}"
+    - "{{gfreezy_traefik_conf_dir }}"
+    - "{{ gfreezy_traefik_services_conf_dir }}"
 
 # Copy traefik config dir to remote host
 - name: Copy traefik config dir to remote host
   ansible.builtin.template:
     src: ./templates/traefik.yml.j2
-    dest: "{{ conf_dir }}/traefik.yml"
+    dest: "{{gfreezy_traefik_conf_dir }}/traefik.yml"
 
-- name: "Create network {{network}}"
-  community.docker.docker_network:
-    name: "{{ network }}"
+- name: "Create gfreezy_traefik_network {{gfreezy_traefik_network}}"
+  community.docker.docker_gfreezy_traefik_network:
+    name: "{{ gfreezy_traefik_network }}"
     state: present
 
 - name: Deploy Traefik reverse proxy
   community.docker.docker_container:
     name: traefik
     restart_policy: always
-    image: "traefik:v2.10"
+    gfreezy_service_image: "traefik:v2.10"
     comparisons:
       "*": strict
-    network_mode: "{{ network }}"
+    gfreezy_traefik_network_mode: "{{ gfreezy_traefik_network }}"
     command:
-      - "--configFile={{docker_traefik_conf}}/traefik.yml"
+      - "--configFile={{gfreezy_traefik_docker_traefik_conf}}/traefik.yml"
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     env:
-      CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare_dns_api_token }}"
+      gfreezy_traefik_cloudflare_dns_api_token: "{{ gfreezy_traefik_cloudflare_dns_api_token }}"
     volumes:
-      - "{{ conf_dir }}/traefik.yml:{{docker_traefik_conf}}/traefik.yml"
-      - "{{ conf_dir }}/letsencrypt:{{docker_traefik_conf}}/letsencrypt"
-      - "{{ services_conf_dir }}:{{docker_traefik_conf}}/conf"
-      - "{{ custom_certs_dir }}:{{docker_traefik_conf}}/certs"
+      - "{{gfreezy_traefik_conf_dir }}/traefik.yml:{{gfreezy_traefik_docker_traefik_conf}}/traefik.yml"
+      - "{{gfreezy_traefik_conf_dir }}/letsencrypt:{{gfreezy_traefik_docker_traefik_conf}}/letsencrypt"
+      - "{{ gfreezy_traefik_services_conf_dir }}:{{gfreezy_traefik_docker_traefik_conf}}/conf"
+      - "{{ gfreezy_traefik_custom_certs_dir }}:{{gfreezy_traefik_docker_traefik_conf}}/certs"
