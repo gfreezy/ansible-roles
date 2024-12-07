@@ -3,7 +3,7 @@ gfreezy_service_name:
 gfreezy_service_port: 80
 gfreezy_service_image:
 gfreezy_service_hostname:
-gfreezy_service_docker_volumes: {}
+gfreezy_service_docker_volumes: []
 gfreezy_service_docker_env: {}
 gfreezy_traefik_conf_dir: /opt/services/traefik
 gfreezy_traefik_services_conf_dir:
