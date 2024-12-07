@@ -1,0 +1,30 @@
+# log:
+#   level: DEBUG
+
+api:
+  dashboard: true
+  insecure: true
+
+providers:
+  file:
+    directory: {{docker_traefik_conf}}/conf
+    watch: true
+
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: a@allsunday.io
+      storage: {{docker_traefik_conf}}/letsencrypt/acme.json
+      dnsChallenge:
+        provider: cloudflare
+metrics:
+  prometheus: {}
+
+accessLog: {}

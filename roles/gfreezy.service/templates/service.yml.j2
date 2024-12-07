@@ -1,0 +1,38 @@
+http:
+  middlewares:
+    local-only:
+      ipWhiteList:
+        sourceRange:
+          - "172.0.0.1/8"  # Only allow localhost
+          - "127.0.0.1/8"  # Only allow localhost
+
+  routers:
+    {{service_name}}-https-router:
+      rule: Host(`{{hostname}}`) && !Path(`/metrics`)
+      entryPoints:
+        - websecure
+      service: {{service_name}}-service
+      tls:
+        certResolver: myresolver
+
+    {{service_name}}-http-router:
+      rule: Host(`{{hostname}}`) && !Path(`/metrics`)
+      entryPoints:
+        - web
+      service: {{service_name}}-service
+
+    {{service_name}}-metrics-router:
+      rule: Host(`{{hostname}}`) && Path(`/metrics`)
+      entryPoints:
+        - web
+      middlewares:
+        - "local-only"
+      service: {{service_name}}-service
+
+  services:
+    {{service_name}}-service:
+      loadBalancer:
+        servers:
+          {% for result in template_service_names -%}
+          - url: http://{{result}}:{{service_port}}
+          {% endfor %}

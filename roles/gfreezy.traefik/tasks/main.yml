@@ -1,0 +1,41 @@
+# Create config dir
+- name: Create config dir
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ conf_dir }}"
+    - "{{ services_conf_dir }}"
+
+# Copy traefik config dir to remote host
+- name: Copy traefik config dir to remote host
+  ansible.builtin.template:
+    src: ./templates/traefik.yml.j2
+    dest: "{{ conf_dir }}/traefik.yml"
+
+- name: "Create network {{network}}"
+  community.docker.docker_network:
+    name: "{{ network }}"
+    state: present
+
+- name: Deploy Traefik reverse proxy
+  community.docker.docker_container:
+    name: traefik
+    restart_policy: always
+    image: "traefik:v2.10"
+    comparisons:
+      "*": strict
+    network_mode: "{{ network }}"
+    command:
+      - "--configFile={{docker_traefik_conf}}/traefik.yml"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    env:
+      CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare_dns_api_token }}"
+    volumes:
+      - "{{ conf_dir }}/traefik.yml:{{docker_traefik_conf}}/traefik.yml"
+      - "{{ conf_dir }}/letsencrypt:{{docker_traefik_conf}}/letsencrypt"
+      - "{{ services_conf_dir }}:{{docker_traefik_conf}}/conf"
+      - "{{ custom_certs_dir }}:{{docker_traefik_conf}}/certs"

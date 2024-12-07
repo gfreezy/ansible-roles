@@ -1,0 +1,7 @@
+---
+conf_dir: /opt/services/traefik
+services_conf_dir:
+docker_traefik_conf: /var/conf/traefik
+network: traefik
+cloudflare_dns_api_token:
+custom_certs_dir: "{{ conf_dir }}/certs"

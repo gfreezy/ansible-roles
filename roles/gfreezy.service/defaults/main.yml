@@ -1,0 +1,9 @@
+---
+service_name:
+service_port: 80
+network: traefik
+image:
+traefik_services_conf_dir:
+hostname:
+docker_volumes: {}
+docker_env: {}

@@ -1,0 +1,118 @@
+---
+- name: Find which of blue/green is running
+  ansible.builtin.shell: |
+    docker ps -f label=service-name={{service_name}} --format {%raw%} {{.Names}} {%endraw%}
+  register: old_service_names
+
+- name: Debug old_service_names
+  ansible.builtin.debug:
+    var: old_service_names
+
+- name: "Deploy both blue and green services"
+  community.docker.docker_container:
+    name: "{{service_name}}-{{service_color}}"
+    restart_policy: always
+    pull: yes
+    image: "{{image}}"
+    comparisons:
+      networks: strict
+      image: ignore
+    capabilities:
+      - SYS_ADMIN
+    network_mode: "{{ network }}"
+    labels:
+      "service-name": "{{service_name}}"
+      "service-color": "{{service_color}}"
+    volumes: "{{ docker_volumes }}"
+    env: "{{ {'TZ': 'Asia/Shanghai'} | combine(docker_env) }}"
+
+  loop:
+    - "green"
+    - "blue"
+  loop_control:
+    loop_var: service_color
+
+- name: Find all services alive
+  ansible.builtin.shell: |
+    docker ps -f label=service-name={{service_name}} --format  "{% raw %}{{.Names}}{% endraw %}"
+  register: all_service_names
+
+- name: Debug all_service_names
+  ansible.builtin.debug:
+    var: all_service_names
+
+- name: Set template variables
+  set_fact:
+    template_service_names: "{{ all_service_names.stdout_lines }}"
+
+- name: Debug template_service_names
+  ansible.builtin.debug:
+    var: template_service_names
+
+- name: Bring all services to traefik
+  ansible.builtin.template:
+    src: "./templates/service.yml.j2"
+    dest: "{{ traefik_services_conf_dir }}/{{service_name}}.yml"
+
+- name: Find service names not in old_service_names, retain only 1
+  set_fact:
+    template_service_names: "{{ (all_service_names.stdout_lines | difference(old_service_names.stdout_lines[:all_service_names.stdout_lines|length - 1]))[:1] }}"
+
+- name: Debug template_service_names
+  ansible.builtin.debug:
+    var: template_service_names
+
+- name: Ensure at least 1 service is running
+  ansible.builtin.assert:
+    that:
+      - template_service_names | length > 0
+    fail_msg: "No service is running"
+    success_msg: "At least 1 service is running"
+
+- name: Remove old services, Keep only new services from traefik
+  ansible.builtin.template:
+    src: "./templates/service.yml.j2"
+    dest: "{{ traefik_services_conf_dir }}/{{service_name}}.yml"
+
+- name: Wait for API to return matching data
+  vars:
+    traefik_api: "127.0.0.1:8080" # replace with traefik api address
+  block:
+    - name: Make an HTTP request to the API
+      ansible.builtin.uri:
+        url: "http://{{traefik_api}}/api/http/services/{{service_name}}-service@file"
+        return_content: yes
+      register: api_response
+
+    - name: Extract the container IPs
+      set_fact:
+        container_ips: "{{ template_service_names }}"
+
+    - name: Debug container_ips
+      ansible.builtin.debug:
+        var: container_ips
+
+    - name: Real IPs
+      set_fact:
+        real_ips: "{{ api_response.json.loadBalancer.servers | map(attribute='url') | map('regex_replace', '^http://(.*?)\\:.*?$', '\\1') }}"
+
+    - name: Debug real_ips
+      ansible.builtin.debug:
+        var: real_ips
+
+    - name: Compare API server URLs with container IPs
+      set_fact:
+        is_match: "{{ container_ips == real_ips }}"
+
+    - name: Wait and retry if not matched
+      ansible.builtin.pause:
+        seconds: 10
+      when: not is_match
+      until: is_match
+      retries: 10
+
+- name: "Stop {{service_name}} old service"
+  community.docker.docker_container:
+    name: "{{ old_service_names.stdout_lines[0] }}"
+    state: absent
+  when: old_service_names.stdout_lines | length > 0
