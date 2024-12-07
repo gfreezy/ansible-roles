@@ -23,10 +23,10 @@
   community.docker.docker_container:
     name: traefik
     restart_policy: always
-    gfreezy_service_image: "traefik:v2.10"
+    image: "traefik:v2.10"
     comparisons:
       "*": strict
-    gfreezy_traefik_network_mode: "{{ gfreezy_traefik_network }}"
+    network_mode: "{{ gfreezy_traefik_network }}"
     command:
       - "--configFile={{gfreezy_traefik_docker_traefik_conf}}/traefik.yml"
     ports:
@@ -55,13 +55,13 @@
     name: "{{gfreezy_service_name}}-{{service_color}}"
     restart_policy: always
     pull: yes
-    gfreezy_service_image: "{{gfreezy_service_image}}"
+    image: "{{gfreezy_service_image}}"
     comparisons:
-      gfreezy_traefik_networks: strict
-      gfreezy_service_image: ignore
+      networks: strict
+      image: ignore
     capabilities:
       - SYS_ADMIN
-    gfreezy_traefik_network_mode: "{{ gfreezy_traefik_network }}"
+    network_mode: "{{ gfreezy_traefik_network }}"
     labels:
       "service-name": "{{gfreezy_service_name}}"
       "service-color": "{{service_color}}"
