@@ -25,15 +25,14 @@ This role sets up Traefik as a reverse proxy with the following features:
 
 The following variables are available for the `gfreezy.traefik` role:
 
-- `traefik_cloudflare_email`: Cloudflare account email (required)
-- `traefik_cloudflare_api_token`: Cloudflare API token (required)
-- `traefik_domain`: Domain name for Traefik dashboard (required)
-- `traefik_gfreezy_traefik_network`: Docker gfreezy_traefik_network name for Traefik (default: traefik)
-- `traefik_dashboard_port`: Port for Traefik dashboard (default: 8080)
-- `traefik_metrics_port`: Port for Prometheus metrics (default: 8082)
-- `gfreezy_traefik_services_conf_dir`: Directory for service configurations (default: /etc/traefik/services)
-- `traefik_log_level`: Logging level (default: ERROR)
-- `traefik_acme_email`: Email for Let's Encrypt notifications (required)
+| Variable | Default Value | Description |
+|----------|--------------|-------------|
+| `gfreezy_traefik_conf_dir` | `/opt/services/traefik` | Base configuration directory for Traefik |
+| `gfreezy_traefik_services_conf_dir` | - | Directory for service-specific Traefik configurations |
+| `gfreezy_traefik_docker_traefik_conf` | `/var/conf/traefik` | Directory for Docker-specific Traefik configurations |
+| `gfreezy_traefik_network` | `traefik` | Name of the Docker network Traefik will use |
+| `gfreezy_traefik_cloudflare_dns_api_token` | - | Cloudflare DNS API token for Let's Encrypt DNS challenge |
+| `gfreezy_traefik_custom_certs_dir` | `{{gfreezy_traefik_conf_dir}}/certs` | Directory for custom SSL certificates |
 
 ## Role: gfreezy.service
 
@@ -47,13 +46,16 @@ This role handles service deployment using a blue/green deployment strategy with
 
 ### Variables
 
-- `gfreezy_service_name`: Name of the service to deploy (required)
-- `service_gfreezy_service_image`: Docker gfreezy_service_image to deploy (required)
-- `gfreezy_service_port`: Port the service listens on (required)
-- `service_env`: Dictionary of environment variables for the service
-- `service_labels`: Dictionary of Docker labels to apply
-- `service_volumes`: List of volumes to mount
-- `service_gfreezy_traefik_networks`: List of Docker gfreezy_traefik_networks to connect to
+| Variable | Default Value | Description |
+|----------|--------------|-------------|
+| `gfreezy_traefik_network` | `traefik` | Docker network for Traefik integration |
+| `gfreezy_traefik_services_conf_dir` | - | Directory for Traefik service configs |
+| `gfreezy_service_name` | - | Name of the service to deploy |
+| `gfreezy_service_port` | `80` | Port the service listens on |
+| `gfreezy_service_image` | - | Docker image for the service |
+| `gfreezy_service_hostname` | - | Hostname for the service |
+| `gfreezy_service_docker_volumes` | `{}` | Docker volumes to mount |
+| `gfreezy_service_docker_env` | `{}` | Environment variables for the container |
 
 ## Example Usage
 
@@ -67,32 +69,32 @@ Here's a complete example showing how to use both roles together to deploy a ser
   user: ubuntu # Use ubuntu user
   vars:
     gfreezy_service_name: rizz
-    gfreezy_service_image: "162953534862.dkr.ecr.us-west-2.amazonaws.com/rizz"
-    traefik_conf_dir: /opt/service/traefik
-    docker_gfreezy_traefik_network_name: traefik
-    gfreezy_traefik_services_conf_dir: "{{ traefik_conf_dir }}/services_conf"
+    gfreezy_service_image: "host.to.rizz.image.com/rizz"
+    gfreezy_traefik_conf_dir: /opt/service/traefik
+    gfreezy_traefik_network: traefik
+    gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_conf_dir }}/services_conf"
     gfreezy_service_hostname: api.gfreezy_service_hostname.com
 
   tasks:
     - include_role:
         name: gfreezy.traefik
       vars:
-       gfreezy_traefik_conf_dir: "{{ traefik_conf_dir }}"
+        gfreezy_traefik_conf_dir: "{{ gfreezy_traefik_conf_dir }}"
         gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_services_conf_dir }}"
-        gfreezy_traefik_custom_certs_dir: "{{ traefik_conf_dir }}/certs"
-        gfreezy_traefik_network: "{{ docker_gfreezy_traefik_network_name }}"
+        gfreezy_traefik_custom_certs_dir: "{{ gfreezy_traefik_conf_dir }}/certs"
+        gfreezy_traefik_network: "{{ gfreezy_traefik_network }}"
 
     - include_role:
         name: gfreezy.service
       vars:
         gfreezy_service_port: 8080
-        gfreezy_traefik_network: "{{ docker_gfreezy_traefik_network_name }}"
+        gfreezy_traefik_network: "{{ gfreezy_traefik_network }}"
         gfreezy_service_docker_volumes:
           - "{{rizz_dir}}:/App/db"
 
     - name: Prune everything
       community.docker.docker_prune:
-        gfreezy_service_images: true
+        images: true
 
 ```
 
