@@ -14,7 +14,7 @@
     src: ./templates/traefik.yml.j2
     dest: "{{ gfreezy_traefik_conf_dir }}/traefik.yml"
 
-- name: "Create gfreezy_traefik_network {{gfreezy_traefik_network}}"
+- name: "Create network {{gfreezy_traefik_network}}"
   community.docker.docker_gfreezy_traefik_network:
     name: "{{ gfreezy_traefik_network }}"
     state: present
