@@ -1,4 +1,46 @@
 ---
+# Create config dir
+- name: Create config dir
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ gfreezy_traefik_conf_dir }}"
+    - "{{ gfreezy_traefik_services_conf_dir }}"
+
+# Copy traefik config dir to remote host
+- name: Copy traefik config dir to remote host
+  ansible.builtin.template:
+    src: ./templates/traefik.yml.j2
+    dest: "{{ gfreezy_traefik_conf_dir }}/traefik.yml"
+
+- name: "Create gfreezy_traefik_network {{gfreezy_traefik_network}}"
+  community.docker.docker_gfreezy_traefik_network:
+    name: "{{ gfreezy_traefik_network }}"
+    state: present
+
+- name: Deploy Traefik reverse proxy
+  community.docker.docker_container:
+    name: traefik
+    restart_policy: always
+    gfreezy_service_image: "traefik:v2.10"
+    comparisons:
+      "*": strict
+    gfreezy_traefik_network_mode: "{{ gfreezy_traefik_network }}"
+    command:
+      - "--configFile={{gfreezy_traefik_docker_traefik_conf}}/traefik.yml"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    env:
+      gfreezy_traefik_cloudflare_dns_api_token: "{{ gfreezy_traefik_cloudflare_dns_api_token }}"
+    volumes:
+      - "{{gfreezy_traefik_conf_dir }}/traefik.yml:{{gfreezy_traefik_docker_traefik_conf}}/traefik.yml"
+      - "{{gfreezy_traefik_conf_dir }}/letsencrypt:{{gfreezy_traefik_docker_traefik_conf}}/letsencrypt"
+      - "{{ gfreezy_traefik_services_conf_dir }}:{{gfreezy_traefik_docker_traefik_conf}}/conf"
+      - "{{ gfreezy_traefik_custom_certs_dir }}:{{gfreezy_traefik_docker_traefik_conf}}/certs"
+
 - name: Find which of blue/green is running
   ansible.builtin.shell: |
     docker ps -f label=service-name={{gfreezy_service_name}} --format {%raw%} {{.Names}} {%endraw%}

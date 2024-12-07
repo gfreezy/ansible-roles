@@ -70,25 +70,17 @@ Here's a complete example showing how to use both roles together to deploy a ser
   vars:
     gfreezy_service_name: rizz
     gfreezy_service_image: "host.to.rizz.image.com/rizz"
+    gfreezy_service_hostname: api.gfreezy_service_hostname.com
     gfreezy_traefik_conf_dir: /opt/service/traefik
     gfreezy_traefik_network: traefik
     gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_conf_dir }}/services_conf"
-    gfreezy_service_hostname: api.gfreezy_service_hostname.com
+    gfreezy_traefik_custom_certs_dir: "{{ gfreezy_traefik_conf_dir }}/certs"
 
   tasks:
-    - include_role:
-        name: gfreezy.traefik
-      vars:
-        gfreezy_traefik_conf_dir: "{{ gfreezy_traefik_conf_dir }}"
-        gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_services_conf_dir }}"
-        gfreezy_traefik_custom_certs_dir: "{{ gfreezy_traefik_conf_dir }}/certs"
-        gfreezy_traefik_network: "{{ gfreezy_traefik_network }}"
-
     - include_role:
         name: gfreezy.service
       vars:
         gfreezy_service_port: 8080
-        gfreezy_traefik_network: "{{ gfreezy_traefik_network }}"
         gfreezy_service_docker_volumes:
           - "{{rizz_dir}}:/App/db"
 
