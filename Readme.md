@@ -1,8 +1,6 @@
 # Ansible Roles for Service Deployment with Traefik
 
-This repository contains two Ansible roles for deploying services with Traefik as a reverse proxy:
-
-- `gfreezy.traefik`: Deploys and configures Traefik as a reverse proxy
+This repository contains a Ansible role for deploying services with Traefik as a reverse proxy:
 - `gfreezy.service`: Deploys services using blue/green deployment strategy
 
 ## Requirements
@@ -11,31 +9,7 @@ This repository contains two Ansible roles for deploying services with Traefik a
 - Docker installed on target hosts
 - Cloudflare DNS API token (for Let's Encrypt DNS challenge)
 
-## Role: gfreezy.traefik
-
-This role sets up Traefik as a reverse proxy with the following features:
-
-- Automatic HTTPS with Let's Encrypt
-- Cloudflare DNS challenge for certificate issuance
-- Docker provider configuration
-- Prometheus metrics endpoint
-- Web dashboard (on port 8080)
-
-### Variables
-
-The following variables are available for the `gfreezy.traefik` role:
-
-| Variable | Default Value | Description |
-|----------|--------------|-------------|
-| `gfreezy_traefik_conf_dir` | `/opt/services/traefik` | Base configuration directory for Traefik |
-| `gfreezy_traefik_services_conf_dir` | - | Directory for service-specific Traefik configurations |
-| `gfreezy_traefik_docker_traefik_conf` | `/var/conf/traefik` | Directory for Docker-specific Traefik configurations |
-| `gfreezy_traefik_network` | `traefik` | Name of the Docker network Traefik will use |
-| `gfreezy_traefik_cloudflare_dns_api_token` | - | Cloudflare DNS API token for Let's Encrypt DNS challenge |
-| `gfreezy_traefik_custom_certs_dir` | `{{gfreezy_traefik_conf_dir}}/certs` | Directory for custom SSL certificates |
-
 ## Role: gfreezy.service
-
 This role handles service deployment using a blue/green deployment strategy with Traefik integration. It provides:
 
 - Zero-downtime deployments using blue/green pattern
@@ -48,8 +22,13 @@ This role handles service deployment using a blue/green deployment strategy with
 
 | Variable | Default Value | Description |
 |----------|--------------|-------------|
-| `gfreezy_traefik_network` | `traefik` | Docker network for Traefik integration |
-| `gfreezy_traefik_services_conf_dir` | - | Directory for Traefik service configs |
+| `gfreezy_traefik_conf_dir` | `/opt/services/traefik` | Base configuration directory for Traefik |
+| `gfreezy_traefik_services_conf_dir` | - | Directory for service-specific Traefik configurations |
+| `gfreezy_traefik_docker_traefik_conf` | `/var/conf/traefik` | Directory for Docker-specific Traefik configurations |
+| `gfreezy_traefik_network` | `traefik` | Name of the Docker network Traefik will use |
+| `gfreezy_traefik_cloudflare_dns_api_token` | - | Cloudflare DNS API token for Let's Encrypt DNS challenge |
+| `gfreezy_traefik_custom_certs_dir` | `{{gfreezy_traefik_conf_dir}}/certs` | Directory for custom SSL certificates |
+| `gfreezy_traefik_custom_certs` | `[]` | List of custom certificates (example: `- certFile: /path/to/cert.crt keyFile: /path/to/key.key`) |
 | `gfreezy_service_name` | - | Name of the service to deploy |
 | `gfreezy_service_port` | `80` | Port the service listens on |
 | `gfreezy_service_image` | - | Docker image for the service |
@@ -57,7 +36,6 @@ This role handles service deployment using a blue/green deployment strategy with
 | `gfreezy_service_docker_volumes` | `{}` | Docker volumes to mount |
 | `gfreezy_service_docker_env` | `{}` | Environment variables for the container |
 | `gfreezy_service_use_custom_cert` | `false` | Whether to use custom certificates |
-| `gfreezy_traefik_custom_certs` | `[]` | List of custom certificates (example: `- certFile: /path/to/cert.crt keyFile: /path/to/key.key`) |
 
 ## Example Usage
 
