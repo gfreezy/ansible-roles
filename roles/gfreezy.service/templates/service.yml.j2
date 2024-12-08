@@ -15,7 +15,7 @@ http:
       tls:
         {%- if not gfreezy_service_use_custom_cert %}
           certResolver: myresolver
-        {%- else -%}
+        {%- else %}
           {}
         {%- endif %}
 
