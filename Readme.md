@@ -56,6 +56,8 @@ This role handles service deployment using a blue/green deployment strategy with
 | `gfreezy_service_hostname` | - | Hostname for the service |
 | `gfreezy_service_docker_volumes` | `{}` | Docker volumes to mount |
 | `gfreezy_service_docker_env` | `{}` | Environment variables for the container |
+| `gfreezy_service_use_custom_cert` | `false` | Whether to use custom certificates |
+| `gfreezy_traefik_custom_certs` | `[]` | List of custom certificates (example: `- certFile: /path/to/cert.crt keyFile: /path/to/key.key`) |
 
 ## Example Usage
 
@@ -75,6 +77,10 @@ Here's a complete example showing how to use both roles together to deploy a ser
     gfreezy_traefik_network: traefik
     gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_conf_dir }}/services_conf"
     gfreezy_traefik_custom_certs_dir: "{{ gfreezy_traefik_conf_dir }}/certs"
+    gfreezy_traefik_custom_certs:
+      - certFile: /path/to/cert.crt
+        keyFile: /path/to/key.key
+    gfreezy_service_use_custom_cert: true
 
   tasks:
     - include_role:
