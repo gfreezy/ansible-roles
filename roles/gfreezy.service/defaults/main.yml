@@ -3,6 +3,7 @@ gfreezy_service_name:
 gfreezy_service_port: 80
 gfreezy_service_image:
 gfreezy_service_hostname:
+gfreezy_service_use_custom_cert: false
 gfreezy_service_docker_volumes: []
 gfreezy_service_docker_env: {}
 gfreezy_traefik_conf_dir: /opt/services/traefik
@@ -11,3 +12,4 @@ gfreezy_traefik_docker_traefik_conf: /var/conf/traefik
 gfreezy_traefik_network: traefik
 gfreezy_traefik_cloudflare_dns_api_token:
 gfreezy_traefik_custom_certs_dir: "{{gfreezy_traefik_conf_dir }}/certs"
+gfreezy_traefik_custom_certs: []

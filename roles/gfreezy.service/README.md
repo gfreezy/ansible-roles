@@ -23,6 +23,15 @@ Required variables:
 - `gfreezy_traefik_docker_traefik_conf`: Path to Traefik config directory inside container
 - `gfreezy_traefik_network`: Docker gfreezy_traefik_network name for Traefik
 - `gfreezy_traefik_cloudflare_dns_api_token`: Cloudflare API token for DNS challenge
+- `gfreezy_service_use_custom_cert`: Whether to use custom certificates (default: false)
+- `gfreezy_traefik_custom_certs`: List of custom certificates (default: []). example:
+
+    ```
+    gfreezy_traefik_custom_certs:
+      - certFile: /path/to/cert.crt
+        keyFile: /path/to/key.key
+    ```
+
 - `gfreezy_traefik_custom_certs_dir`: Directory for custom certificates
 
 Optional variables:

@@ -12,8 +12,11 @@ http:
       entryPoints:
         - websecure
       service: {{gfreezy_service_name}}-service
-      tls:
+      tls: {% if gfreezy_service_use_custom_cert %}
         certResolver: myresolver
+      {%- else -%}
+        {}
+      {%- endif %}
 
     {{gfreezy_service_name}}-http-router:
       rule: Host(`{{gfreezy_service_hostname}}`) && !Path(`/metrics`)
