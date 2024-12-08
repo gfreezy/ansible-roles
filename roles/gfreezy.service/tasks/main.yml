@@ -96,6 +96,18 @@
     src: "./templates/service.yml.j2"
     dest: "{{ gfreezy_traefik_services_conf_dir }}/{{gfreezy_service_name}}.yml"
 
+- name: Set old_gfreezy_service_names if empty and multiple services exist
+  ansible.builtin.set_fact:
+    old_gfreezy_service_names:
+      stdout_lines: "{{ [all_gfreezy_service_names.stdout_lines[0]] }}"
+  when:
+    - old_gfreezy_service_names.stdout_lines | length == 0
+    - all_gfreezy_service_names.stdout_lines | length > 1
+
+- name: Debug old_gfreezy_service_names
+  ansible.builtin.debug:
+    var: old_gfreezy_service_names
+
 - name: Find service names not in old_gfreezy_service_names, retain only 1
   set_fact:
     template_gfreezy_service_names: "{{ (all_gfreezy_service_names.stdout_lines | difference(old_gfreezy_service_names.stdout_lines[:all_gfreezy_service_names.stdout_lines|length - 1]))[:1] }}"
