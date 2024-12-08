@@ -14,6 +14,12 @@
     src: ./templates/traefik.yml.j2
     dest: "{{ gfreezy_traefik_conf_dir }}/traefik.yml"
 
+# Copy traefik certs config to remote host
+- name: Copy traefik certs config to remote host
+  ansible.builtin.template:
+    src: ./templates/custom_certs.yml.j2
+    dest: "{{ gfreezy_traefik_services_conf_dir }}/custom_certs.yml"
+
 - name: "Create network {{gfreezy_traefik_network}}"
   community.docker.docker_network:
     name: "{{ gfreezy_traefik_network }}"
