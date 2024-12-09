@@ -1,0 +1,19 @@
+# log:
+#   level: DEBUG
+
+api:
+  dashboard: true
+  insecure: true
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: a@allsunday.io
+      storage: {{ gfreezy_traefik_docker_traefik_conf }}/letsencrypt/acme.json
+      dnsChallenge:
+        provider: cloudflare
+
+accessLog: false
+
+metrics:
+  prometheus: {}
