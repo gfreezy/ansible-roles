@@ -46,7 +46,7 @@
       - "443:443"
       - "8080:8080"
     env:
-      CLOUDFLARE_DNS_API_TOKEN: "{{ gfreezy_traefik_cloudflare_dns_api_token }}"
+      CF_DNS_API_TOKEN: "{{ gfreezy_traefik_cloudflare_dns_api_token }}"
     volumes:
       - "{{ gfreezy_traefik_conf_dir }}/traefik.yml:{{gfreezy_traefik_docker_traefik_conf}}/traefik.yml"
       - "{{ gfreezy_traefik_conf_dir }}/letsencrypt:{{gfreezy_traefik_docker_traefik_conf}}/letsencrypt"
