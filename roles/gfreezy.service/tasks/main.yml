@@ -35,7 +35,7 @@
   community.docker.docker_container:
     name: traefik
     restart_policy: always
-    image: "traefik:v2.10"
+    image: "traefik:v3.3"
     comparisons:
       "*": strict
     network_mode: "{{ gfreezy_traefik_network }}"
