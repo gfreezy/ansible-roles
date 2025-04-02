@@ -122,7 +122,7 @@
 
 - name: Find service names not in old_gfreezy_service_names, retain only 1
   set_fact:
-    template_gfreezy_service_names: "{{ difference(all_gfreezy_service_names.stdout_lines, old_gfreezy_service_names.stdout_lines)[:1] }}"
+    template_gfreezy_service_names: "{{ (all_gfreezy_service_names.stdout_lines | difference(old_gfreezy_service_names.stdout_lines[:all_gfreezy_service_names.stdout_lines|length - 1]))[:1] }}"
 
 - name: Debug template_gfreezy_service_names
   ansible.builtin.debug:
