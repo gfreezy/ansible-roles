@@ -173,13 +173,12 @@
     - name: Wait and retry if not matched
       ansible.builtin.pause:
         seconds: 10
-      when: not is_match
-      until: is_match
-      retries: 10
+  when: not is_match
+  until: is_match
+  retries: 10
 
 - name: "Stop {{gfreezy_service_name}} old service"
   community.docker.docker_container:
     name: "{{ old_gfreezy_service_names.stdout_lines[0] }}"
     state: absent
   when: old_gfreezy_service_names.stdout_lines | length > 0
-
