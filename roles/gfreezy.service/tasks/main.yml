@@ -144,6 +144,10 @@
   vars:
     traefik_api: "127.0.0.1:8080" # replace with traefik api address
   block:
+    - name: Wait a while
+      ansible.builtin.pause:
+        seconds: 3
+
     - name: Make an HTTP request to the API
       ansible.builtin.uri:
         url: "http://{{traefik_api}}/api/http/services/{{gfreezy_service_name}}-service@file"
@@ -170,12 +174,10 @@
       set_fact:
         is_match: "{{ container_ips == real_ips }}"
 
-    - name: Wait and retry if not matched
-      ansible.builtin.pause:
-        seconds: 10
-  when: not is_match
-  until: is_match
-  retries: 10
+    - name: Fail if not matched
+      ansible.builtin.fail:
+        msg: "API response does not match expected container IPs"
+      when: not is_match
 
 - name: "Stop {{gfreezy_service_name}} old service"
   community.docker.docker_container:
