@@ -1,0 +1,21 @@
+---
+- name: "Deploy example service"
+  hosts: localhost
+  vars:
+    service_name: test-service
+    image: "nginx:latest"
+    hostname: test.allsunday.io
+    service_port: 80
+    gfreezy_traefik_conf_dir: "./traefik"
+    gfreezy_service_port: "{{ service_port }}"
+    gfreezy_service_name: "{{ service_name }}"
+    gfreezy_service_image: "{{ image }}"
+    gfreezy_service_hostname: "{{ hostname }}"
+    gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_conf_dir }}/services"
+    gfreezy_traefik_cloudflare_dns_api_token: sss
+    gfreezy_service_extra_hostnames:
+      - "test2.allsunday.io"
+    gfreezy_service_redirect_hostnames:
+      - "test3.allsunday.io"
+  roles:
+    - role: ../roles/gfreezy.service

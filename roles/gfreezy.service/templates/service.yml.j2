@@ -6,11 +6,23 @@ http:
           - "172.0.0.1/8"  # Only allow localhost
           - "127.0.0.1/8"  # Only allow localhost
 
+{% if gfreezy_service_redirect_hostnames %}
+    {{gfreezy_service_name}}-redirect:
+      redirectRegex:
+          regex: "^https?://({{gfreezy_service_redirect_hostnames|join('|')}})(.*)"
+          replacement: "https://{{gfreezy_service_hostname}}$2"
+          permanent: true
+{% endif %}
+
   routers:
     {{gfreezy_service_name}}-https-router:
-      rule: Host(`{{gfreezy_service_hostname}}`) && !Path(`/metrics`)
+      rule: "(Host(`{{gfreezy_service_hostname}}`){% if gfreezy_service_extra_hostnames or gfreezy_service_redirect_hostnames %} || {% for hostname in gfreezy_service_extra_hostnames + gfreezy_service_redirect_hostnames %}Host(`{{hostname}}`){% if not loop.last %} || {% endif %}{% endfor %}{% endif %}) && !Path(`/metrics`)"
       entryPoints:
         - websecure
+{% if gfreezy_service_redirect_hostnames %}
+      middlewares:
+        - "{{gfreezy_service_name}}-redirect"
+{% endif %}
       service: {{gfreezy_service_name}}-service
       tls: {{ {"certResolver": "myresolver"} if not gfreezy_service_use_custom_cert else {} }}
 
