@@ -26,13 +26,26 @@ Required variables:
 - `gfreezy_service_use_custom_cert`: Whether to use custom certificates (default: false)
 - `gfreezy_traefik_custom_certs`: List of custom certificates (default: []). example:
 
-    ```
+    ```yaml
     gfreezy_traefik_custom_certs:
       - certFile: /path/to/cert.crt
         keyFile: /path/to/key.key
     ```
 
 - `gfreezy_traefik_custom_certs_dir`: Directory for custom certificates
+- `gfreezy_service_redirect_hostnames`: List of hostnames to redirect to the service (default: []). example:
+
+    ```yaml
+    gfreezy_service_redirect_hostnames:
+      - www.example.com
+    ```
+
+- `gfreezy_service_extra_hostnames`: List of extra hostnames to add to the service (default: []). example:
+
+    ```yaml
+    gfreezy_service_extra_hostnames:
+      - example.com
+    ```
 
 Optional variables:
 
@@ -47,9 +60,10 @@ No dependencies on other roles.
 Example Playbook
 ----------------
 
-    - hosts: servers
-      roles:
-         - role: gfreezy.service
+```yaml
+- hosts: servers
+  roles:
+    - role: gfreezy.service
            gfreezy_service_name: myapp
            gfreezy_service_image: nginx:latest
            gfreezy_service_port: 8080
@@ -57,6 +71,7 @@ Example Playbook
            gfreezy_traefik_conf_dir: /etc/traefik
            gfreezy_traefik_network: traefik
            gfreezy_traefik_cloudflare_dns_api_token: your-token-here
+```
 
 License
 -------

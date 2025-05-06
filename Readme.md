@@ -1,6 +1,7 @@
 # Ansible Roles for Service Deployment with Traefik
 
 This repository contains a Ansible role for deploying services with Traefik as a reverse proxy:
+
 - `gfreezy.service`: Deploys services using blue/green deployment strategy
 
 ## Requirements
@@ -10,6 +11,7 @@ This repository contains a Ansible role for deploying services with Traefik as a
 - Cloudflare DNS API token (for Let's Encrypt DNS challenge)
 
 ## Role: gfreezy.service
+
 This role handles service deployment using a blue/green deployment strategy with Traefik integration. It provides:
 
 - Zero-downtime deployments using blue/green pattern
@@ -36,6 +38,8 @@ This role handles service deployment using a blue/green deployment strategy with
 | `gfreezy_service_docker_volumes` | `{}` | Docker volumes to mount |
 | `gfreezy_service_docker_env` | `{}` | Environment variables for the container |
 | `gfreezy_service_use_custom_cert` | `false` | Whether to use custom certificates |
+| `gfreezy_service_redirect_hostnames` | `[]` | List of hostnames to redirect to the service |
+| `gfreezy_service_extra_hostnames` | `[]` | List of extra hostnames to add to the service |
 
 ## Example Usage
 
@@ -59,6 +63,10 @@ Here's a complete example showing how to use both roles together to deploy a ser
       - certFile: /path/to/cert.crt
         keyFile: /path/to/key.key
     gfreezy_service_use_custom_cert: true
+    gfreezy_service_redirect_hostnames:
+      - www.gfreezy_service_hostname.com
+    gfreezy_service_extra_hostnames:
+      - api2.gfreezy_service_hostname.com
 
   tasks:
     - include_role:
@@ -73,4 +81,3 @@ Here's a complete example showing how to use both roles together to deploy a ser
         images: true
 
 ```
-
