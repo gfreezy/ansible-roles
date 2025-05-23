@@ -34,7 +34,7 @@ This role handles service deployment using a blue/green deployment strategy with
 | `gfreezy_service_name` | - | Name of the service to deploy |
 | `gfreezy_service_port` | `80` | Port the service listens on |
 | `gfreezy_service_image` | - | Docker image for the service |
-| `gfreezy_service_hostname` | - | Hostname for the service |
+| `gfreezy_service_hostname` | - | Hostname for the service. If not set, traefik router will not be created. But you can still use `{gfreezy_service_name}-service` as a service name in the traefik configuration to write your own router. |
 | `gfreezy_service_docker_volumes` | `{}` | Docker volumes to mount |
 | `gfreezy_service_docker_env` | `{}` | Environment variables for the container |
 | `gfreezy_service_use_custom_cert` | `false` | Whether to use custom certificates |

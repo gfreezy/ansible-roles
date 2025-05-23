@@ -5,7 +5,7 @@ http:
         sourceRange:
           - "172.0.0.1/8"  # Only allow localhost
           - "127.0.0.1/8"  # Only allow localhost
-
+{% if gfreezy_service_hostname %}
 {% if gfreezy_service_redirect_hostnames %}
     {{gfreezy_service_name}}-redirect:
       redirectRegex:
@@ -39,6 +39,7 @@ http:
       middlewares:
         - "local-only"
       service: {{gfreezy_service_name}}-service
+{% endif %}
 
   services:
     {{gfreezy_service_name}}-service:
