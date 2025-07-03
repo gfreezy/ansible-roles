@@ -11,6 +11,7 @@
     gfreezy_service_name: "{{ service_name }}"
     gfreezy_service_image: "{{ image }}"
     gfreezy_service_hostname: "{{ hostname }}"
+    gfreezy_service_redirect_to_https: true
     gfreezy_traefik_services_conf_dir: "{{ gfreezy_traefik_conf_dir }}/services"
     gfreezy_traefik_cloudflare_dns_api_token: sss
     gfreezy_service_extra_hostnames:

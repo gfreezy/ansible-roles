@@ -14,6 +14,14 @@ http:
           permanent: true
 {% endif %}
 
+{% if gfreezy_service_redirect_to_https %}
+    {{gfreezy_service_name}}-redirect-to-https:
+      redirectRegex:
+          regex: "^http://(.*)"
+          replacement: "https://$1"
+          permanent: true
+{% endif %}
+
   routers:
     {{gfreezy_service_name}}-https-router:
       rule: "(Host(`{{gfreezy_service_hostname}}`){% if gfreezy_service_extra_hostnames or gfreezy_service_redirect_hostnames %} || {% for hostname in gfreezy_service_extra_hostnames + gfreezy_service_redirect_hostnames %}Host(`{{hostname}}`){% if not loop.last %} || {% endif %}{% endfor %}{% endif %}) && !Path(`/metrics`)"
@@ -31,6 +39,10 @@ http:
       entryPoints:
         - web
       service: {{gfreezy_service_name}}-service
+{% if gfreezy_service_redirect_to_https %}
+      middlewares:
+        - "{{gfreezy_service_name}}-redirect-to-https"
+{% endif %}
 
     {{gfreezy_service_name}}-metrics-router:
       rule: Host(`{{gfreezy_service_hostname}}`) && Path(`/metrics`)

@@ -8,6 +8,7 @@ gfreezy_service_redirect_hostnames: []
 gfreezy_service_use_custom_cert: false
 gfreezy_service_docker_volumes: []
 gfreezy_service_docker_env: {}
+gfreezy_service_redirect_to_https: false
 gfreezy_traefik_conf_dir: /opt/services/traefik
 gfreezy_traefik_services_conf_dir: "{{gfreezy_traefik_conf_dir}}/services"
 gfreezy_traefik_docker_traefik_conf: /var/conf/traefik
