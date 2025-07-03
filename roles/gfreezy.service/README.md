@@ -51,6 +51,7 @@ Optional variables:
 
 - `gfreezy_service_docker_volumes`: Dictionary of volume mappings (default: {})
 - `gfreezy_service_docker_env`: Dictionary of environment variables (default: {})
+- `gfreezy_service_redirect_to_https`: Whether to redirect HTTP to HTTPS (default: false)
 
 Dependencies
 ------------

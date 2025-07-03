@@ -40,6 +40,7 @@ This role handles service deployment using a blue/green deployment strategy with
 | `gfreezy_service_use_custom_cert` | `false` | Whether to use custom certificates |
 | `gfreezy_service_redirect_hostnames` | `[]` | List of hostnames to redirect to the service |
 | `gfreezy_service_extra_hostnames` | `[]` | List of extra hostnames to add to the service |
+| `gfreezy_service_redirect_to_https` | `false` | Whether to redirect HTTP to HTTPS |
 
 ## Example Usage
 
